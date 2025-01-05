@@ -16,10 +16,8 @@ const Home = () => {
     setRefreshing(false);
   }
 
-  // console.log(weaponData);
-
   return (
-    <SafeAreaView className='bg-primary h-full'>
+    <View className='bg-primary h-full flex-1'>
       <FlatList
         data={weaponData}
         keyExtractor={item => item.$id}
@@ -29,7 +27,7 @@ const Home = () => {
           />
         )}
         ListHeaderComponent={() => (
-          <View className='my-6 px-4 space-y-6'>
+          <View className='mt-12 mb-4 px-4 space-y-6'>
             <View className='flex-row justify-between items-start mb-6'>
               <View className='mb-6'>
                 <Text className='font-psemibold text-base text-gray-100'>
@@ -49,7 +47,7 @@ const Home = () => {
           />
         }
       />
-    </SafeAreaView>
+    </View>
   )
 }
 
