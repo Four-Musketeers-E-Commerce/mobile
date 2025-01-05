@@ -2,10 +2,12 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Redirect, router } from 'expo-router'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import { ScrollView, StatusBar, Text, View } from 'react-native';
+import { LogBox, ScrollView, Text, View } from 'react-native';
 import Logo from '@/components/Logo';
 import CustomButton from '@/components/CustomButton';
 
+LogBox.ignoreLogs(['Warning: ...']);
+LogBox.ignoreAllLogs();
 
 function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
@@ -43,7 +45,6 @@ function App() {
           />
         </View>
       </ScrollView>
-      <StatusBar hidden={true}/>
     </SafeAreaView>
   )
 }

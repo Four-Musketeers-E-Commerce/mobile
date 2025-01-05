@@ -50,7 +50,7 @@ const Logo = ({ size, isFirstPage }) => {
           <MaterialCommunityIcons
             name="bullet"
             size={size / 2}
-            color="coral"
+            color="red"
             className='rotate-90'
           />
         </Animated.View>

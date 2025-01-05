@@ -1,15 +1,14 @@
 import CustomButton from '@/components/CustomButton'
 import FormField from '@/components/FormField'
 import Logo from '@/components/Logo'
-import { useGlobalContext } from '@/context/GlobalProvider'
-import { createUser, getCurrentUser } from '@/lib/appwrite'
+import { createUser } from '@/lib/appwrite'
 import { Link, router } from 'expo-router'
 import React, { useState } from 'react'
-import { Alert, ScrollView, Text, View } from 'react-native'
+import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const SignUp = () => {
-  const { setUser, setIsLoggedIn } = useGlobalContext();
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -79,6 +78,13 @@ const SignUp = () => {
               Sign In
             </Link>
           </View>
+
+          <TouchableOpacity
+            className='w-full items-center mt-7'
+            onPress={() => { router.replace("/") }}
+          >
+            <AntDesign name="leftcircle" size={36} color="red" />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
