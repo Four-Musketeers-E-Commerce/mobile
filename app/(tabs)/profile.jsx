@@ -38,8 +38,8 @@ const Profile = () => {
             </View>
             <CustomButton
               title="Edit Profile"
-              handlePress={() => { }}
-              containerStyles="mt-3 px-4"
+              handlePress={() => { router.push("/profile/edit") }}
+              containerStyles="mt-5 px-4"
             />
           </View>
         </View>
