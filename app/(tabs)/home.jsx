@@ -4,7 +4,6 @@ import { getAllWeapons } from '@/lib/appwrite'
 import useAppWrite from '@/lib/useAppWrite'
 import React, { useState } from 'react'
 import { FlatList, RefreshControl, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Home = () => {
   const { user } = useGlobalContext();
