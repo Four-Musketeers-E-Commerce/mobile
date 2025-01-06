@@ -1,8 +1,8 @@
 import CustomButton from '@/components/CustomButton';
-import { getWeapon } from '@/lib/appwrite';
+import { addItemsToCart, getWeapon } from '@/lib/appwrite';
 import useAppWrite from '@/lib/useAppWrite';
 import { router, useLocalSearchParams } from 'expo-router'
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, Image, ScrollView, TouchableOpacity, Alert, Share } from 'react-native'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -11,6 +11,7 @@ import Feather from '@expo/vector-icons/Feather';
 const Item = () => {
   const { query } = useLocalSearchParams();
   const { data } = useAppWrite(() => getWeapon(query));
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onShare = async () => {
     try {
@@ -29,29 +30,41 @@ const Item = () => {
     }
   }
 
+  const addToCart = async () => {
+    setIsSubmitting(true);
+    try {
+      await addItemsToCart(query);
+      Alert.alert("Success", "Item added successfully");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <View className='bg-primary h-full'>
       <View className='w-full absolute top-[50px] z-10 px-4 flex-row items-center gap-1'>
-          <TouchableOpacity
-            className='w-8 h-8 justify-center items-center bg-gray-50/50 rounded-lg'
-            onPress={() => { router.back() }}
-          >
-            <AntDesign name="left" size={20} color="white" />
-          </TouchableOpacity>
-          <View className='flex-1' />
-          <TouchableOpacity
-            className='w-8 h-8 justify-center items-center bg-gray-50/50 rounded-lg'
-            onPress={onShare}
-          >
-            <FontAwesome name="share" size={20} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            className='w-8 h-8 justify-center items-center bg-gray-50/50 rounded-lg'
-            onPress={() => { router.push("/(tabs)/shopping-cart") }}
-          >
-            <Feather name="shopping-cart" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          className='w-8 h-8 justify-center items-center bg-gray-50/50 rounded-lg'
+          onPress={() => { router.back() }}
+        >
+          <AntDesign name="left" size={20} color="white" />
+        </TouchableOpacity>
+        <View className='flex-1' />
+        <TouchableOpacity
+          className='w-8 h-8 justify-center items-center bg-gray-50/50 rounded-lg'
+          onPress={onShare}
+        >
+          <FontAwesome name="share" size={20} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          className='w-8 h-8 justify-center items-center bg-gray-50/50 rounded-lg'
+          onPress={() => { router.push("/(tabs)/shopping-cart") }}
+        >
+          <Feather name="shopping-cart" size={20} color="white" />
+        </TouchableOpacity>
+      </View>
 
       <ScrollView contentContainerStyle={{ height: "80%" }}>
         <View className='w-full h-[35vh] mb-5'>
@@ -79,7 +92,8 @@ const Item = () => {
         <CustomButton
           title="Add to Cart"
           containerStyles="px-4"
-          handlePress={() => { }}
+          handlePress={addToCart}
+          isLoading={isSubmitting}
         />
       </View>
     </View>

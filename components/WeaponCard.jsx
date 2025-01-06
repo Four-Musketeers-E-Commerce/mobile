@@ -16,7 +16,7 @@ const WeaponCard = ({ item: {
     setIsSubmitting(true);
     try {
       await addItemsToCart($id);
-      Alert.alert("Success", "Item added successfully!");
+      Alert.alert("Success", "Item added successfully");
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
