@@ -37,7 +37,7 @@ const Edit = () => {
     try {
       const result = await modifyProfile(form.username, form.password, form.avatar, isNewAvatarPicked);
       setUser(result);
-      Alert.alert("Success", "Profile modified successfully!");
+      Alert.alert("Success", "Profile modified successfully");
       router.replace("/(tabs)/profile");
     } catch (error) {
       Alert.alert("Error", error.message);
