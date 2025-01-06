@@ -1,7 +1,8 @@
-import React from 'react'
-import { Image, TouchableOpacity, View, Text } from 'react-native'
+import React, { useState } from 'react'
+import { Image, TouchableOpacity, View, Text, Alert } from 'react-native'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
+import { addItemsToCart } from '@/lib/appwrite';
 
 const WeaponCard = ({ item: {
   $id,
@@ -9,10 +10,25 @@ const WeaponCard = ({ item: {
   photo_url,
   price
 } }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const addToCart = async () => {
+    setIsSubmitting(true);
+    try {
+      await addItemsToCart($id);
+      Alert.alert("Success", "Item added successfully!");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <TouchableOpacity
       className='w-full h-[128px] bg-blue-400/50 px-4 mb-7 rounded-lg'
       onPress={() => { router.push(`/item/${$id}`) }}
+      disabled={isSubmitting}
     >
       <View className='flex-row py-4 gap-3 items-center'>
         <View className='w-[96px] h-[96px] rounded-lg'>
@@ -32,7 +48,11 @@ const WeaponCard = ({ item: {
           </Text>
         </View>
 
-        <TouchableOpacity className='flex-col h-full justify-end'>
+        <TouchableOpacity
+          className='flex-col h-full justify-end'
+          onPress={addToCart}
+          disabled={isSubmitting}
+        >
           <MaterialCommunityIcons name="cart-plus" size={30} color="orange" />
         </TouchableOpacity>
       </View>
