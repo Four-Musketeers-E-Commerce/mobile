@@ -1,17 +1,18 @@
 import React from 'react'
 import { Image, TouchableOpacity, View, Text } from 'react-native'
-import Feather from '@expo/vector-icons/Feather';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { router } from 'expo-router';
 
 const WeaponCard = ({ item: {
+  $id,
   weapon_name,
   photo_url,
-  description,
-  price,
-  weapon_type
+  price
 } }) => {
   return (
     <TouchableOpacity
       className='w-full h-[128px] bg-blue-400/50 px-4 mb-7 rounded-lg'
+      onPress={() => { router.push(`/item/${$id}`) }}
     >
       <View className='flex-row py-4 gap-3 items-center'>
         <View className='w-[96px] h-[96px] rounded-lg'>
@@ -32,7 +33,7 @@ const WeaponCard = ({ item: {
         </View>
 
         <TouchableOpacity className='flex-col h-full justify-end'>
-          <Feather name="shopping-cart" size={30} color="yellow" />
+          <MaterialCommunityIcons name="cart-plus" size={30} color="orange" />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
