@@ -1,8 +1,8 @@
 import CustomButton from '@/components/CustomButton';
-import { addItemsToCart, getWeapon } from '@/lib/appwrite';
+import { addItemsToCart, getWeapon, modifyViews } from '@/lib/appwrite';
 import useAppWrite from '@/lib/useAppWrite';
 import { router, useLocalSearchParams } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, Image, ScrollView, TouchableOpacity, Alert, Share } from 'react-native'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -41,6 +41,16 @@ const Item = () => {
       setIsSubmitting(false);
     }
   }
+
+  const onOpenPage = async () => {
+    await modifyViews(query);
+  }
+
+  useEffect(() => {
+    if (query) {
+      onOpenPage();
+    }
+  }, [query])
 
   return (
     <View className='bg-primary h-full'>

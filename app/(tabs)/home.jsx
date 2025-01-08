@@ -1,17 +1,20 @@
+import Trending from '@/components/Trending'
 import WeaponCard from '@/components/WeaponCard'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import { getAllWeapons } from '@/lib/appwrite'
+import { getAllWeapons, getTrendingItems } from '@/lib/appwrite'
 import useAppWrite from '@/lib/useAppWrite'
 import React, { useState } from 'react'
 import { FlatList, RefreshControl, Text, View } from 'react-native'
 
 const Home = () => {
   const { user } = useGlobalContext();
-  const { data: weaponData, refetch } = useAppWrite(getAllWeapons);
+  const { data: trendingItems, refetch: refetchTrending } = useAppWrite(getTrendingItems);
+  const { data: weaponData, refetch: refetchWeapons } = useAppWrite(getAllWeapons);
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = async () => {
     setRefreshing(true);
-    await refetch();
+    await refetchTrending();
+    await refetchWeapons();
     setRefreshing(false);
   }
 
@@ -37,6 +40,17 @@ const Home = () => {
                 </Text>
               </View>
             </View>
+
+            <View className='w-full flex-1 pt-5 pb-8'>
+              <Text className='text-xl text-gray-100 font-pregular'>
+                Popular Weapons
+              </Text>
+              <Trending items={trendingItems ?? []} />
+            </View>
+
+            <Text className='text-xl text-gray-100 font-pregular'>
+              All Weapons
+            </Text>
           </View>
         )}
         refreshControl={
