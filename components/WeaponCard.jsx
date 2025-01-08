@@ -12,6 +12,10 @@ const WeaponCard = ({ item: {
 } }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const onPress = () => {
+    router.push(`/item/${$id}`);
+  }
+
   const addToCart = async () => {
     setIsSubmitting(true);
     try {
@@ -27,7 +31,7 @@ const WeaponCard = ({ item: {
   return (
     <TouchableOpacity
       className='w-full h-[128px] bg-blue-400/50 px-4 mb-7 rounded-lg'
-      onPress={() => { router.push(`/item/${$id}`) }}
+      onPress={onPress}
       disabled={isSubmitting}
     >
       <View className='flex-row py-4 gap-3 items-center'>
