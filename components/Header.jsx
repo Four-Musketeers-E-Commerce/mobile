@@ -102,7 +102,7 @@ const Header = ({
         <View className="px-4 py-2 bg-black-200 mb-3">
           <TextInput
             className="bg-black-100 rounded-lg px-3 py-2 text-gray-100"
-            placeholder="Search products..."
+            placeholder={`Search products in ${selectedCategory ? selectedCategory : "all categories"}`}
             placeholderTextColor="#777"
             value={searchQuery}
             onChangeText={setSearchQuery}
