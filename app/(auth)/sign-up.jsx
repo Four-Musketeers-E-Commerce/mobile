@@ -35,12 +35,14 @@ const SignUp = () => {
   return (
     <SafeAreaView className='bg-primary h-full'>
       <ScrollView>
-        <View className='w-full min-h-[85vh] justify-center px-4 my-6'>
-          <Logo
-            size={96}
-          />
+        <View className='w-full min-h-[85vh] justify-center px-4'>
+          <View className='w-full justify-center items-center'>
+            <Logo
+              containerStyles="w-64 h-64"
+            />
+          </View>
 
-          <Text className='text-2xl text-white font-psemibold mt-10'>
+          <Text className='text-2xl text-white font-psemibold mt-2'>
             Sign Up
           </Text>
 

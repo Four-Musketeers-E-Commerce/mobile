@@ -1,3 +1,4 @@
+import Logo from '@/components/Logo'
 import Trending from '@/components/Trending'
 import WeaponCard from '@/components/WeaponCard'
 import { useGlobalContext } from '@/context/GlobalProvider'
@@ -30,8 +31,8 @@ const Home = () => {
         )}
         ListHeaderComponent={() => (
           <View className='mt-12 mb-4 px-4 space-y-6'>
-            <View className='flex-row justify-between items-start mb-6'>
-              <View className='mb-6'>
+            <View className='flex-row justify-between items-center mb-2'>
+              <View>
                 <Text className='font-psemibold text-base text-gray-100'>
                   Welcome back,
                 </Text>
@@ -39,9 +40,10 @@ const Home = () => {
                   {user?.username}
                 </Text>
               </View>
+              <Logo containerStyles='w-36 h-36'/>
             </View>
 
-            <View className='w-full flex-1 pt-5 pb-8'>
+            <View className='w-full flex-1 pt-2 pb-8'>
               <Text className='text-xl text-gray-100 font-pregular'>
                 Popular Weapons
               </Text>

@@ -1,7 +1,7 @@
 import { getAllComments } from '@/lib/appwrite'
 import useAppWrite from '@/lib/useAppWrite'
-import React, { useEffect, useState } from 'react'
-import { FlatList, Image, RefreshControl, Text, View } from 'react-native'
+import React, { useEffect } from 'react'
+import { Image, Text, View } from 'react-native'
 
 const WeaponComments = ({ weaponId }) => {
   const { data, refetch } = useAppWrite(() => getAllComments(weaponId));

@@ -25,19 +25,8 @@ function App() {
           className='w-full min-h-[85vh] items-center justify-center px-6'
         >
           <Logo
-            size={120}
-            isFirstPage={true}
+            containerStyles="w-96 h-96"
           />
-          <View
-            className='w-full flex-col items-end px-5 relative -top-12'
-          >
-            <Text className='text-secondary-200 text-3xl italic font-bold'>
-              Four Musketeers
-            </Text>
-            <Text className='text-gray-100 text-lg italic'>
-              The Top End War Lord
-            </Text>
-          </View>
           <CustomButton
             title="Continue with Email"
             containerStyles="w-full mt-7"
