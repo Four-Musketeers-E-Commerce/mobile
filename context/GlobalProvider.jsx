@@ -1,6 +1,5 @@
 import { getCurrentUser } from "@/lib/appwrite";
 import { createContext, useContext, useEffect, useState } from "react";
-import { Alert } from "react-native";
 
 const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
@@ -9,6 +8,7 @@ const GlobalProvider = ({children}) => {
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isUpdated, setIsUpdated] = useState(false);
 
     useEffect(() => {
         getCurrentUser().
@@ -32,7 +32,9 @@ const GlobalProvider = ({children}) => {
             setUser,
             isLoggedIn,
             setIsLoggedIn,
-            isLoading
+            isLoading,
+            isUpdated,
+            setIsUpdated
         }}
         >
             {children}
