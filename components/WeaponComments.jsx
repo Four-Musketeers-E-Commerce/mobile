@@ -1,17 +1,27 @@
+import { useGlobalContext } from '@/context/GlobalProvider'
 import { getAllComments } from '@/lib/appwrite'
 import useAppWrite from '@/lib/useAppWrite'
 import React, { useEffect } from 'react'
 import { Image, Text, View } from 'react-native'
 
 const WeaponComments = ({ weaponId }) => {
+  const { isUpdated, setIsUpdated } = useGlobalContext();
   const { data, refetch } = useAppWrite(() => getAllComments(weaponId));
 
+  async function fetchData() {
+    await refetch();
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      await refetch();
-    }
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (isUpdated) {
+      fetchData();
+      setIsUpdated(false);
+    }
+  }, [isUpdated])
 
   return (
     <>
@@ -23,7 +33,7 @@ const WeaponComments = ({ weaponId }) => {
           data.map(item => (
             <View
               key={item.$id}
-              className='w-full bg-blue-900 rounded-xl p-4 my-2'
+              className='w-full bg-blue-400/50 rounded-xl p-4 my-2'
             >
               <View className='flex-row items-center mb-2 gap-2'>
                 <Image

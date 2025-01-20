@@ -34,8 +34,8 @@ const TabsLayout = () => {
             borderTopWidth: 1,
             borderTopColor: "#232533",
             height: 70,
-            paddingTop: 5,
-            paddingBottom: 8
+            paddingTop: 10,
+            paddingBottom: 5
           }
         }}
       >
@@ -48,8 +48,8 @@ const TabsLayout = () => {
               <TabIcon
                 color={color}
                 focused={focused}
-                name="Home"
-                icon={<Entypo name="home" size={24} color={color} />}
+                // name="Home"
+                icon={<Entypo name="home" size={30} color={color} />}
               />
             )
           }}
@@ -63,8 +63,8 @@ const TabsLayout = () => {
               <TabIcon
                 color={color}
                 focused={focused}
-                name="Categories"
-                icon={<Entypo name="menu" size={24} color={color} />}
+                // name="Categories"
+                icon={<Entypo name="menu" size={30} color={color} />}
               />
             )
           }}
@@ -78,8 +78,8 @@ const TabsLayout = () => {
               <TabIcon
                 color={color}
                 focused={focused}
-                name="ShoppingCart"
-                icon={<FontAwesome name="shopping-cart" size={24} color={color} />}
+                // name="ShoppingCart"
+                icon={<FontAwesome name="shopping-cart" size={30} color={color} />}
               />
             )
           }}
@@ -93,8 +93,8 @@ const TabsLayout = () => {
               <TabIcon
                 color={color}
                 focused={focused}
-                name="Profile"
-                icon={<MaterialCommunityIcons name="account" size={24} color={color} />}
+                // name="Profile"
+                icon={<MaterialCommunityIcons name="account" size={30} color={color} />}
               />
             )
           }}

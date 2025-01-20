@@ -1,5 +1,5 @@
 import CustomButton from '@/components/CustomButton'
-import { getAllCartItems, modifyCartItem } from '@/lib/appwrite'
+import { addToOrder, clearCartItems, getAllCartItems, modifyCartItem } from '@/lib/appwrite'
 import useAppWrite from '@/lib/useAppWrite'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
@@ -21,6 +21,23 @@ const ShoppingCart = () => {
     try {
       await modifyCartItem(weaponId, quantity);
       await refetch();
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const handleCheckout = async () => {
+    setIsLoading(true);
+    try {
+      if (!data.length) throw new Error("No items cna be checked out");
+      const weaponIds = data.map(item => item.weapons.$id);
+      const quantities = data.map(item => item.quantity);
+      await addToOrder(weaponIds, quantities, totalPrice);
+      await clearCartItems();
+      await refetch();
+      Alert.alert("Success", "Checked out successfully");
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
@@ -89,7 +106,7 @@ const ShoppingCart = () => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-                <Text className='text-2xl text-secondary font-psemibold'>
+                <Text className='text-2xl text-green-600 font-psemibold'>
                   $AUD {item.weapons.price}
                 </Text>
               </View>
@@ -109,6 +126,7 @@ const ShoppingCart = () => {
         <CustomButton
           title="Check Out"
           containerStyles="px-2"
+          handlePress={handleCheckout}
           isLoading={isLoading}
         />
       </View>
