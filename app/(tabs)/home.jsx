@@ -27,6 +27,7 @@ const Home = () => {
         renderItem={({ item }) => (
           <WeaponCard
             item={item}
+            refetchTrending={refetchTrending}
           />
         )}
         ListHeaderComponent={() => (

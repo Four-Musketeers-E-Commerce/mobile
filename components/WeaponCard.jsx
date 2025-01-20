@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { Image, TouchableOpacity, View, Text, Alert } from 'react-native'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
-import { addItemsToCart } from '@/lib/appwrite';
+import { addItemsToCart, modifyViews } from '@/lib/appwrite';
 
 const WeaponCard = ({ item: {
   $id,
   weapon_name,
   photo_url,
   price
-} }) => {
+}, refetchTrending }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onPress = () => {
@@ -20,6 +20,8 @@ const WeaponCard = ({ item: {
     setIsSubmitting(true);
     try {
       await addItemsToCart($id);
+      await modifyViews($id);
+      await refetchTrending();
       Alert.alert("Success", "Item added successfully");
     } catch (error) {
       Alert.alert("Error", error.message);

@@ -71,7 +71,7 @@ const Edit = () => {
               <Image
                 source={{ uri: form.avatar ? form.avatar.uri : user?.avatar }}
                 className='w-[90%] h-[90%] rounded-full'
-                resizeMode='contain'
+                resizeMode='cover'
               />
             </TouchableOpacity>
           </View>
