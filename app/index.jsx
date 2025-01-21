@@ -2,7 +2,7 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Redirect, router } from 'expo-router'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import { LogBox, ScrollView, Text, View } from 'react-native';
+import { LogBox, ScrollView, View } from 'react-native';
 import Logo from '@/components/Logo';
 import CustomButton from '@/components/CustomButton';
 

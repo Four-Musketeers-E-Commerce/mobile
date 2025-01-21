@@ -1,7 +1,7 @@
 import React from 'react'
 import { ActivityIndicator, View } from 'react-native'
 
-const LoadingIndicator = ({isLoading}) => {
+const LoadingIndicator = ({ isLoading }) => {
   return (
     <>
       {isLoading && (

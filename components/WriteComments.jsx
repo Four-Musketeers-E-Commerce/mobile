@@ -5,7 +5,7 @@ import { addComments } from '@/lib/appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const WriteComments = ({ weaponId, containerStyles }) => {
-  const {setIsUpdated} = useGlobalContext();
+  const { setIsUpdated } = useGlobalContext();
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 

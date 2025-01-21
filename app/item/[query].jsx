@@ -57,7 +57,7 @@ const Item = () => {
 
   return (
     <View className='bg-primary h-full'>
-      <LoadingIndicator isLoading={isSubmitting}/>
+      <LoadingIndicator isLoading={isSubmitting} />
 
       <View className='w-full absolute top-[50px] z-10 px-4 flex-row items-center gap-1'>
         <TouchableOpacity

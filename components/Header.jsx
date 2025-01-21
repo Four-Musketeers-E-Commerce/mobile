@@ -19,10 +19,10 @@ const Header = ({
   categoryProducts,
   setCategoryProducts,
 }) => {
-    const [slideAnim] = useState(new Animated.Value(-300));
-    const [categories, setCategories] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [modalVisible, setModalVisible] = useState(false);
+  const [slideAnim] = useState(new Animated.Value(-300));
+  const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
 
   // Fetch weapons and group by category
@@ -67,7 +67,7 @@ const Header = ({
   const openMenu = () => {
     setModalVisible(true);
     Animated.timing(slideAnim, {
-      toValue: 0, 
+      toValue: 0,
       duration: 300,
       useNativeDriver: true,
     }).start();
@@ -79,7 +79,7 @@ const Header = ({
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      setModalVisible(false); 
+      setModalVisible(false);
     });
   };
 
@@ -99,15 +99,15 @@ const Header = ({
       </View>
 
       {/* Search Bar */}
-        <View className="px-4 py-2 bg-black-200 mb-3">
-          <TextInput
-            className="bg-black-100 rounded-lg px-3 py-2 text-gray-100"
-            placeholder={`Search products in ${selectedCategory ? selectedCategory : "all categories"}`}
-            placeholderTextColor="#777"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
+      <View className="px-4 py-2 bg-black-200 mb-3">
+        <TextInput
+          className="bg-black-100 rounded-lg px-3 py-2 text-gray-100"
+          placeholder={`Search products in ${selectedCategory ? selectedCategory : "all categories"}`}
+          placeholderTextColor="#777"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
 
       {/* Categories Popup */}
       <Modal
