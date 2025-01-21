@@ -29,7 +29,7 @@ const Home = () => {
 
   return (
     <View className='bg-primary h-full flex-1 px-4'>
-      <LoadingIndicator isLoading={refreshing || isSubmitting}/>
+      <LoadingIndicator isLoading={refreshing || isSubmitting} />
 
       <FlatList
         data={weaponData}

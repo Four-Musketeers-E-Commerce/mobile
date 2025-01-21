@@ -105,7 +105,7 @@ const ShoppingCart = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
           {data && data.map(item => (
             <View
               key={item.$id}

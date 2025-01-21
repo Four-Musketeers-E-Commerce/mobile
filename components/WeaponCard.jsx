@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Image, TouchableOpacity, View, Text, Alert } from 'react-native'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';

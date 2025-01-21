@@ -42,7 +42,7 @@ const Profile = () => {
 
   return (
     <View className='bg-primary h-full px-4'>
-      <LoadingIndicator isLoading={isLoading}/>
+      <LoadingIndicator isLoading={isLoading} />
       <ScrollView>
         <View className='w-full justify-center items-center px-4 mt-12'>
           <TouchableOpacity

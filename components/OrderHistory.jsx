@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 
-const OrderHistory = ({orders}) => {
+const OrderHistory = ({ orders }) => {
   return (
     <>
       <View className='w-full mt-7'>

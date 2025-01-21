@@ -12,7 +12,7 @@ const Category = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-primary">
-      <LoadingIndicator isLoading={isSubmitting}/>
+      <LoadingIndicator isLoading={isSubmitting} />
       <Header
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
