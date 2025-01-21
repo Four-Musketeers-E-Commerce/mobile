@@ -8,12 +8,14 @@ import * as ImagePicker from "expo-image-picker"
 import Entypo from '@expo/vector-icons/Entypo';
 import FormField from '@/components/FormField';
 import { modifyProfile } from '@/lib/appwrite';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 const Edit = () => {
   const { user, setUser } = useGlobalContext();
   const [form, setForm] = useState({
     username: user?.username || "",
-    password: "",
+    oldPassword: "",
+    newPassword: "",
     avatar: null
   });
   const [isNewAvatarPicked, setIsNewAvatarPicked] = useState(false);
@@ -35,7 +37,10 @@ const Edit = () => {
   const onUpdate = async () => {
     setIsSubmitting(true);
     try {
-      const result = await modifyProfile(form.username, form.password, form.avatar, isNewAvatarPicked);
+      if (form.newPassword !== "" && form.oldPassword === "") {
+        throw new Error("Current password is required to set the new password");
+      }
+      const result = await modifyProfile(form.username, form.oldPassword, form.newPassword, form.avatar, isNewAvatarPicked);
       setUser(result);
       Alert.alert("Success", "Profile modified successfully");
       router.replace("/(tabs)/profile");
@@ -44,7 +49,8 @@ const Edit = () => {
     } finally {
       setForm({
         username: user?.username || "",
-        password: "",
+        oldPassword: "",
+        newPassword: "",
         avatar: null
       });
       setIsNewAvatarPicked(false);
@@ -54,6 +60,8 @@ const Edit = () => {
 
   return (
     <SafeAreaView className='bg-primary h-full'>
+      <LoadingIndicator isLoading={isSubmitting} />
+
       <ScrollView>
         <View className='w-full justify-center items-center px-4'>
           <TouchableOpacity
@@ -78,14 +86,21 @@ const Edit = () => {
 
           <FormField
             title="User Name"
+            placeholder={user.username}
             otherStyles="mt-7"
             handleTextChange={(e) => setForm({ ...form, username: e })}
           />
 
           <FormField
-            title="Password"
+            title="Current Password"
             otherStyles="mt-7"
-            handleTextChange={(e) => setForm({ ...form, password: e })}
+            handleTextChange={(e) => setForm({ ...form, oldPassword: e })}
+          />
+
+          <FormField
+            title="New Password"
+            otherStyles="mt-7"
+            handleTextChange={(e) => setForm({ ...form, newPassword: e })}
           />
 
           <CustomButton

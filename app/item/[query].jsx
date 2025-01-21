@@ -9,6 +9,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
 import WriteComments from '@/components/WriteComments';
 import WeaponComments from '@/components/WeaponComments';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 const Item = () => {
   const { query } = useLocalSearchParams();
@@ -56,6 +57,8 @@ const Item = () => {
 
   return (
     <View className='bg-primary h-full'>
+      <LoadingIndicator isLoading={isSubmitting}/>
+
       <View className='w-full absolute top-[50px] z-10 px-4 flex-row items-center gap-1'>
         <TouchableOpacity
           className='w-8 h-8 justify-center items-center bg-gray-50/50 rounded-lg'

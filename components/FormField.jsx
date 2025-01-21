@@ -18,11 +18,11 @@ const FormField = ({ title, value, placeholder, handleTextChange, otherStyles, .
           placeholder={placeholder}
           placeholderTextColor="#ddd"
           onChangeText={handleTextChange}
-          secureTextEntry={title === "Password" && !isShowPassword}
+          secureTextEntry={title.toLowerCase().includes("password") && !isShowPassword}
           autoCapitalize='none'
           {...props}
         />
-        {title === "Password" && (
+        {title.toLowerCase().includes("password") && (
           <TouchableOpacity
             onPress={() => setIsShowPassword(!isShowPassword)}
           >
