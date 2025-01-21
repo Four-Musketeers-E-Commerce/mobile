@@ -1,15 +1,18 @@
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { getAllOrders, signOut } from '@/lib/appwrite';
 import { router, useFocusEffect } from 'expo-router';
-import React, { useCallback, useEffect } from 'react'
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import CustomButton from '@/components/CustomButton';
 import useAppWrite from '@/lib/useAppWrite';
+import OrderHistory from '@/components/OrderHistory';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 const Profile = () => {
   const { setIsLoggedIn, user, setUser } = useGlobalContext();
-  const { data, refetch } = useAppWrite(getAllOrders);
+  const { data: orders, refetch } = useAppWrite(getAllOrders);
+  const [isLoading, setIsLoading] = useState(false);
 
   const logOut = async () => {
     await signOut();
@@ -18,16 +21,28 @@ const Profile = () => {
     router.replace("/(auth)/sign-in");
   }
 
+  const refreshData = async () => {
+    setIsLoading(true);
+    try {
+      await refetch();
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useFocusEffect(useCallback(() => {
-    refetch();
+    refreshData();
   }, []))
 
   useEffect(() => {
-    refetch();
+    refreshData();
   }, []);
 
   return (
     <View className='bg-primary h-full px-4'>
+      <LoadingIndicator isLoading={isLoading}/>
       <ScrollView>
         <View className='w-full justify-center items-center px-4 mt-12'>
           <TouchableOpacity
@@ -53,43 +68,7 @@ const Profile = () => {
           </View>
         </View>
 
-        <View className='w-full mt-7'>
-          <Text className='text-2xl text-gray-50 font-psemibold mb-2'>
-            Orders
-          </Text>
-          {data && data.map(order => (
-            <View
-              key={order.$id}
-              className='bg-blue-400/50 w-full h-auto rounded-lg p-2'
-            >
-              <View className='w-full flex-row items-center justify-between mb-3'>
-                <Text className='text-base text-gray-50 font-psemibold'>
-                  {new Date(order.$createdAt).toLocaleString()}
-                </Text>
-                <Text className='text-xl text-secondary font-pbold'>
-                  $AUD {order.amount}
-                </Text>
-              </View>
-              <View
-                className='w-full flex-row items-center justify-between'
-              >
-                <Text className='w-[40%] text-lg text-secondary font-psemibold'>Product</Text>
-                <Text className='w-[40%] text-lg text-secondary font-psemibold'>Price</Text>
-                <Text className='w-[20%] text-lg text-secondary font-psemibold'>Quantity</Text>
-              </View>
-              {order.weapons.map((weapon, index) => (
-                <View
-                  key={index}
-                  className='w-full flex-row items-center justify-between'
-                >
-                  <Text className='w-[40%] text-base font-pregular'>{weapon.weapon_name}</Text>
-                  <Text className='w-[40%] text-base font-pregular'>$AUD {weapon.price}</Text>
-                  <Text className='w-[40%] text-base font-pregular'>x{order.quantities[index]}</Text>
-                </View>
-              ))}
-            </View>
-          ))}
-        </View>
+        <OrderHistory orders={orders} />
       </ScrollView>
     </View>
   )

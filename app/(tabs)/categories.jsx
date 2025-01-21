@@ -3,13 +3,16 @@ import React, { useState } from 'react';
 import { View, FlatList, SafeAreaView, TouchableOpacity, Text } from 'react-native';
 import WeaponCard from '@/components/WeaponCard';
 import Header from '@/components/Header';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 const Category = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryProducts, setCategoryProducts] = useState([]);
-  
+
   return (
     <SafeAreaView className="flex-1 bg-primary">
+      <LoadingIndicator isLoading={isSubmitting}/>
       <Header
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
@@ -20,7 +23,14 @@ const Category = () => {
         <FlatList
           data={categoryProducts[selectedCategory]}
           keyExtractor={(item) => item.$id}
-          renderItem={({ item }) => <WeaponCard item={item} />}
+          renderItem={({ item }) => (
+            <WeaponCard
+              item={item}
+              isSubmitting={isSubmitting}
+              setIsSubmitting={setIsSubmitting}
+            />
+          )}
+          className='px-4'
         />
       ) : (
         <FlatList
@@ -42,11 +52,16 @@ const Category = () => {
                 data={categoryProducts[item]?.slice(0, 2)}
                 keyExtractor={(product) => product.$id}
                 renderItem={({ item: product }) => (
-                  <WeaponCard item={product} />
+                  <WeaponCard
+                    item={product}
+                    isSubmitting={isSubmitting}
+                    setIsSubmitting={setIsSubmitting}
+                  />
                 )}
               />
             </View>
           )}
+          className='px-4'
         />
       )}
     </SafeAreaView>

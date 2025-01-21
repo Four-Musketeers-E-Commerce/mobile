@@ -9,9 +9,7 @@ const WeaponCard = ({ item: {
   weapon_name,
   photo_url,
   price
-}, refetchTrending }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+}, isSubmitting, setIsSubmitting }) => {
   const onPress = () => {
     router.push(`/item/${$id}`);
   }
@@ -21,7 +19,6 @@ const WeaponCard = ({ item: {
     try {
       await addItemsToCart($id);
       await modifyViews($id);
-      await refetchTrending();
       Alert.alert("Success", "Item added successfully");
     } catch (error) {
       Alert.alert("Error", error.message);

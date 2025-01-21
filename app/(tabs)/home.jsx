@@ -1,10 +1,12 @@
+import LoadingIndicator from '@/components/LoadingIndicator'
 import Logo from '@/components/Logo'
 import Trending from '@/components/Trending'
 import WeaponCard from '@/components/WeaponCard'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { getAllWeapons, getTrendingItems } from '@/lib/appwrite'
 import useAppWrite from '@/lib/useAppWrite'
-import React, { useState } from 'react'
+import { useFocusEffect } from 'expo-router'
+import React, { useCallback, useState } from 'react'
 import { FlatList, RefreshControl, Text, View } from 'react-native'
 
 const Home = () => {
@@ -12,26 +14,35 @@ const Home = () => {
   const { data: trendingItems, refetch: refetchTrending } = useAppWrite(getTrendingItems);
   const { data: weaponData, refetch: refetchWeapons } = useAppWrite(getAllWeapons);
   const [refreshing, setRefreshing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const onRefresh = async () => {
     setRefreshing(true);
     await refetchTrending();
     await refetchWeapons();
     setRefreshing(false);
   }
+  useFocusEffect(
+    useCallback(() => {
+      onRefresh();
+    }, [])
+  );
 
   return (
-    <View className='bg-primary h-full flex-1'>
+    <View className='bg-primary h-full flex-1 px-4'>
+      <LoadingIndicator isLoading={refreshing || isSubmitting}/>
+
       <FlatList
         data={weaponData}
         keyExtractor={item => item.$id}
         renderItem={({ item }) => (
           <WeaponCard
             item={item}
-            refetchTrending={refetchTrending}
+            isSubmitting={isSubmitting}
+            setIsSubmitting={setIsSubmitting}
           />
         )}
         ListHeaderComponent={() => (
-          <View className='mt-12 mb-4 px-4 space-y-6'>
+          <View className='mt-12 mb-4 space-y-6'>
             <View className='flex-row justify-between items-center mb-2'>
               <View>
                 <Text className='font-psemibold text-base text-gray-100'>
@@ -41,7 +52,7 @@ const Home = () => {
                   {user?.username}
                 </Text>
               </View>
-              <Logo containerStyles='w-36 h-36'/>
+              <Logo containerStyles='w-36 h-36' />
             </View>
 
             <View className='w-full flex-1 pt-2 pb-8'>

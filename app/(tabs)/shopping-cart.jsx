@@ -4,6 +4,8 @@ import useAppWrite from '@/lib/useAppWrite'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useFocusEffect } from 'expo-router'
+import Feather from '@expo/vector-icons/Feather';
+import LoadingIndicator from '@/components/LoadingIndicator'
 
 const ShoppingCart = () => {
   const { data, refetch } = useAppWrite(getAllCartItems);
@@ -45,12 +47,36 @@ const ShoppingCart = () => {
     }
   }
 
+  const deleteAllItems = async () => {
+    setIsLoading(true);
+    try {
+      await clearCartItems();
+      await refetch();
+      Alert.alert("Success", "All items removed successfully");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const refreshData = async () => {
+    setIsLoading(true);
+    try {
+      await refetch();
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useFocusEffect(useCallback(() => {
-    refetch();
+    refreshData();
   }, []));
 
   useEffect(() => {
-    refetch();
+    refreshData();
   }, [])
 
   useEffect(() => {
@@ -59,13 +85,26 @@ const ShoppingCart = () => {
 
   return (
     <View className='bg-primary h-full'>
+      <LoadingIndicator isLoading={isLoading} />
+
       <View className='mt-12 p-4 flex-1'>
-        <Text className='w-full text-start text-2xl text-gray-100 font-psemibold'>
-          Cart Items {' '}
-          <Text className='text-lg text-gray-100 font-pmedium'>
-            ({data ? data.length : 0})
+        <View className='w-full flex-row justify-between items-center'>
+          <Text className='text-start text-2xl text-gray-100 font-psemibold'>
+            Cart Items {' '}
+            <Text className='text-lg text-gray-100 font-pmedium'>
+              ({data ? data.length : 0})
+            </Text>
           </Text>
-        </Text>
+          <TouchableOpacity
+            className='flex justify-center items-center'
+            onPress={deleteAllItems}
+            disabled={isLoading}
+          >
+            <Text className='text-xl text-red-600 font-psemibold underline'>
+              Clear All
+            </Text>
+          </TouchableOpacity>
+        </View>
         <ScrollView>
           {data && data.map(item => (
             <View
@@ -105,6 +144,13 @@ const ShoppingCart = () => {
                       +
                     </Text>
                   </TouchableOpacity>
+                  <TouchableOpacity
+                    className='w-6 h-6 ml-4 justify-center items-center rounded-md'
+                    onPress={() => modifyItemQuantity(item.weapons.$id, 0)}
+                    disabled={isLoading}
+                  >
+                    <Feather name="trash-2" size={20} color="red" />
+                  </TouchableOpacity>
                 </View>
                 <Text className='text-2xl text-green-600 font-psemibold'>
                   $AUD {item.weapons.price}
@@ -114,6 +160,7 @@ const ShoppingCart = () => {
           ))}
         </ScrollView>
       </View>
+
       <View
         className='bg-primary w-full absolute bottom-0 p-4 flex-row items-center justify-between'
       >

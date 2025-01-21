@@ -55,13 +55,9 @@ const Trending = ({ items }) => {
       )}
       onViewableItemsChanged={viewableItemsChange}
       viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-      contentOffset={{ x: 30 }}
       horizontal
       ListEmptyComponent={() => (
         <Text>Empty</Text>
-      )}
-      ListHeaderComponent={() => (
-        <View className='w-12' />
       )}
       ListFooterComponent={() => (
         <View className='w-48' />
