@@ -1,9 +1,11 @@
+import { Ionicons } from '@expo/vector-icons'
 import CustomButton from '@/components/CustomButton'
 import { addToOrder, clearCartItems, getAllCartItems, modifyCartItem } from '@/lib/appwrite'
 import useAppWrite from '@/lib/useAppWrite'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useFocusEffect } from 'expo-router'
+import {router} from 'expo-router'
 
 const ShoppingCart = () => {
   const { data, refetch } = useAppWrite(getAllCartItems);
@@ -31,7 +33,7 @@ const ShoppingCart = () => {
   const handleCheckout = async () => {
     setIsLoading(true);
     try {
-      if (!data.length) throw new Error("No items cna be checked out");
+      if (!data.length) throw new Error("No items can be checked out");
       const weaponIds = data.map(item => item.weapons.$id);
       const quantities = data.map(item => item.quantity);
       await addToOrder(weaponIds, quantities, totalPrice);
@@ -60,16 +62,34 @@ const ShoppingCart = () => {
   return (
     <View className='bg-primary h-full'>
       <View className='mt-12 p-4 flex-1'>
+        <View className='flex-row items-center justify-between p-4 pl-1'>
         <Text className='w-full text-start text-2xl text-gray-100 font-psemibold'>
           Cart Items {' '}
           <Text className='text-lg text-gray-100 font-pmedium'>
             ({data ? data.length : 0})
           </Text>
         </Text>
-        <ScrollView>
+        <TouchableOpacity onPress={async () => {
+    try {
+      await clearCartItems(); 
+      await refetch();
+      Alert.alert('Success', 'All items removed from the cart!');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+      }}
+        disabled={isLoading}
+        style={{ marginLeft: -16 }}
+        >
+          <Ionicons name="trash-outline" size={24} color={isLoading ? 'gray' : 'white'} />
+        </TouchableOpacity>
+        </View>
+        <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
           {data && data.map(item => (
-            <View
+            <TouchableOpacity
               key={item.$id}
+              onPress= {() => {
+                router.push(`/item/${item.weapons.$id}`)}}
               className='bg-blue-400/50 w-full h-[124px] p-4 my-3 rounded-xl flex-row items-center gap-4'
             >
               <Image
@@ -110,7 +130,7 @@ const ShoppingCart = () => {
                   $AUD {item.weapons.price}
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
