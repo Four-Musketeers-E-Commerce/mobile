@@ -33,7 +33,7 @@ const Category = () => {
           className='px-4'
         />
       ) : (
-        <FlatList>
+        <ScrollView>
           <View className="px-4">
             <Text className="text-center text-4xl font-extrabold text-white tracking-wide">
               Search for CS2 skins for your weapon of choice
@@ -81,7 +81,7 @@ const Category = () => {
             </View>
           )}
         /> 
-        </FlatList>
+        </ScrollView>
       )}
     </View>
   );
