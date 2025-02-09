@@ -7,21 +7,20 @@ import {
   Modal,
   SafeAreaView,
   Animated,
-  TextInput,
   Alert,
 } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import useAppWrite from "@/lib/useAppWrite";
 import { getAllWeapons } from '@/lib/appwrite';
+import SearchInput from './SearchInput';
 
 const Header = ({
   selectedCategory,
   setSelectedCategory,
-  categoryProducts,
   setCategoryProducts,
 }) => {
   const [slideAnim] = useState(new Animated.Value(-300));
   const [categories, setCategories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
 
@@ -43,27 +42,12 @@ const Header = ({
     }
   };
 
-  const filterProducts = () => {
-    if (searchQuery.trim()) {
-      const filteredProducts = {};
-      for (const category of categories) {
-        filteredProducts[category] = categoryProducts[category]?.filter((product) =>
-          product.weapon_name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      }
-      setCategoryProducts(filteredProducts);
-    } else {
-      fetchCategories();
-    }
-  };
 
   useEffect(() => {
     fetchCategories();
-  }, [searchQuery]);
+  }, );
 
-  useEffect(() => {
-    filterProducts();
-  });
+
   const openMenu = () => {
     setModalVisible(true);
     Animated.timing(slideAnim, {
@@ -84,30 +68,22 @@ const Header = ({
   };
 
   return (
-    <>
-      <View className="flex-row items-center justify-between px-4 py-3 bg-black-100">
+    <View className="bg-primary w-full mt-16 px-4 pb-4">
+      <View className="flex-row items-center justify-between bg-primary w-full">
         <TouchableOpacity onPress={openMenu}>
-          <MaterialCommunityIcons name="menu" size={30} color="#FFF" />
+          <MaterialCommunityIcons name="menu" size={35} color="#FFF" />
         </TouchableOpacity>
 
         {/* Dynamic Title */}
         <View className="flex-1 items-center">
-          <Text className="text-secondary-200 text-lg font-bold">
+          <Text className="text-secondary-200 text-2xl font-bold">
             {selectedCategory ? selectedCategory.toUpperCase() : "ALL CATEGORIES"}
           </Text>
         </View>
       </View>
 
       {/* Search Bar */}
-      <View className="px-4 py-2 bg-black-200 mb-3">
-        <TextInput
-          className="bg-black-100 rounded-lg px-3 py-2 text-gray-100"
-          placeholder={`Search products in ${selectedCategory ? selectedCategory : "all categories"}`}
-          placeholderTextColor="#777"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
+      <SearchInput/>
 
       {/* Categories Popup */}
       <Modal
@@ -137,7 +113,7 @@ const Header = ({
               }}
               className="py-3"
             >
-              <Text className="text-gray-100 text-xl font-psemibold mb-6 pl-2">
+              <Text className="text-secondary-200 text-2xl font-psemibold pl-4 mt-2">
                 ALL CATEGORIES
               </Text>
             </TouchableOpacity>
@@ -148,9 +124,9 @@ const Header = ({
                   setSelectedCategory(category);
                   closeMenu();
                 }}
-                className="py-3 border-b border-gray-700"
+                className="py-3 border border-gray-700"
               >
-                <Text className="text-white text-lg font-pmedium pl-4">
+                <Text className="text-gray-100 text-2xl font-pmedium pl-4">
                   {category.charAt(0).toUpperCase() + category.slice(1)}
                 </Text>
               </TouchableOpacity>
@@ -158,7 +134,8 @@ const Header = ({
           </SafeAreaView>
         </Animated.View>
       </Modal>
-    </>
+    </View>
+
   );
 };
 
