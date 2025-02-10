@@ -1,5 +1,5 @@
 import CustomButton from '@/components/CustomButton';
-import { addItemsToCart, getWeapon, modifyViews } from '@/lib/appwrite';
+import { addItemsToCart, getWeapon, modifyViews, hasUserReviewed } from '@/lib/appwrite';
 import useAppWrite from '@/lib/useAppWrite';
 import { router, useLocalSearchParams } from 'expo-router'
 import React, { useEffect, useState } from 'react'
@@ -7,7 +7,7 @@ import { View, Text, Image, ScrollView, TouchableOpacity, Alert, Share } from 'r
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
-import WriteComments from '@/components/WriteComments';
+import SubmitReview from '@/components/SubmitReview';
 import WeaponComments from '@/components/WeaponComments';
 import LoadingIndicator from '@/components/LoadingIndicator';
 
@@ -15,6 +15,20 @@ const Item = () => {
   const { query } = useLocalSearchParams();
   const { data } = useAppWrite(() => getWeapon(query));
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReviewed, setIsReviewed] = useState(null);
+
+
+
+  const checkIfReviewed = async () => {
+    if(!query) return;
+    try{
+      const reviewed = await hasUserReviewed(query);
+      setIsReviewed(reviewed);
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
 
   const onShare = async () => {
     try {
@@ -52,8 +66,14 @@ const Item = () => {
   useEffect(() => {
     if (query) {
       onOpenPage();
+      checkIfReviewed();
     }
   }, [query])
+
+
+
+  if (isReviewed === null) return <LoadingIndicator isLoading={true} />;
+
 
   return (
     <View className='bg-primary h-full'>
@@ -101,7 +121,11 @@ const Item = () => {
             </Text>
           </View>
 
-          <WriteComments weaponId={query} containerStyles="my-7" />
+          {!isReviewed ? (
+            <SubmitReview weaponId={query} containerStyles="my-7" onSuccess={() => setIsReviewed(true)} />
+          ) : (
+            <View style={{ height: 25 }} />
+          )}
 
           <WeaponComments weaponId={query} />
         </ScrollView>
