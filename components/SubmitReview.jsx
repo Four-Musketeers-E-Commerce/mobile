@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, View, TouchableOpacity, Text } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { addComments, addStarRating } from '@/lib/appwrite';
+import { addComments, addStarRating, editComment, editStarRating } from '@/lib/appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import WeaponRatingInput from './WeaponRating';
 import WriteComments from './WriteComments';
 
-const SubmitReview = ({ weaponId, containerStyles }) => {
+const SubmitReview = ({ weaponId, containerStyles, editData, onEditComplete }) => {
   const { setIsUpdated } = useGlobalContext();
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (editData) {
+      setComment(editData.comment);
+      setRating(editData.rating);
+      setIsEditing(true);
+    }
+  }, [editData]);
 
   const submitReview = async () => {
     setIsSubmitting(true);
@@ -18,14 +27,22 @@ const SubmitReview = ({ weaponId, containerStyles }) => {
       if (rating === 0) throw new Error('Please select a rating');
       if (comment.trim() === '') throw new Error('Please write a comment before submitting');
 
-      await addStarRating(weaponId, rating);
-      await addComments(weaponId, comment);
-      Alert.alert('Success', 'Review submitted successfully');
+      if (isEditing) {
+        await editStarRating(weaponId, rating);
+        await editComment(weaponId, comment);
+        Alert.alert('Success', 'Review updated successfully');
+        onEditComplete?.();
+      } else {
+        await addStarRating(weaponId, rating);
+        await addComments(weaponId, comment);
+        Alert.alert('Success', 'Review submitted successfully');
+      }
+      
       setIsUpdated(true);
-
-      // Reset fields after submission
       setComment('');
       setRating(0);
+      setIsEditing(false);
+      
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
@@ -36,11 +53,11 @@ const SubmitReview = ({ weaponId, containerStyles }) => {
   return (
     <View className={`w-full px-4 flex-col gap-4 items-center ${containerStyles}`}>
         <Text className="text-xl text-gray-300 font-psemibold w-full text-start">
-            How was this product?
+            {isEditing ? 'Edit your review' : 'How was this product?'}
         </Text>
-            <WeaponRatingInput rating={rating} setRating={setRating} />
+        <WeaponRatingInput rating={rating} setRating={setRating} />
         <Text className="text-xl text-gray-300 font-psemibold w-full text-start">
-            Leave a comment
+            {isEditing ? 'Edit your comment' : 'Leave a comment'}
         </Text>
         
         <WriteComments comment={comment} setComment={setComment} />

@@ -5,6 +5,7 @@ const WeaponRating = ({ rating, setRating }) => {
       <StarRating
         rating={rating} 
         onChange={setRating}
+        enableHalfStar={false}
       />
   );
 };

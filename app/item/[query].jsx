@@ -10,23 +10,43 @@ import Feather from '@expo/vector-icons/Feather';
 import SubmitReview from '@/components/SubmitReview';
 import WeaponComments from '@/components/WeaponComments';
 import LoadingIndicator from '@/components/LoadingIndicator';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 const Item = () => {
   const { query } = useLocalSearchParams();
   const { data } = useAppWrite(() => getWeapon(query));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReviewed, setIsReviewed] = useState(null);
+  const { isUpdated } = useGlobalContext();
+  const [isLoading, setIsLoading] = useState(true);
+  const [editReviewData, setEditReviewData] = useState(null);
 
+  const isReviewedToggle = () => {
+    setIsReviewed(!isReviewed);
+  }
 
+  const handleEditStart = (reviewData) => {
+    setEditReviewData(reviewData);
+    setIsReviewed(false); // Show the review form
+  };
+
+  const handleEditComplete = () => {
+    setEditReviewData(null);
+    setIsReviewed(true);
+  };
 
   const checkIfReviewed = async () => {
     if(!query) return;
+    setIsLoading(true);
     try{
       const reviewed = await hasUserReviewed(query);
       setIsReviewed(reviewed);
     }
     catch(error){
       console.error(error);
+    }
+    finally {
+      setIsLoading(false);
     }
   }
 
@@ -68,11 +88,12 @@ const Item = () => {
       onOpenPage();
       checkIfReviewed();
     }
-  }, [query])
+  }, [query, isUpdated])
 
+  useEffect(() => {
+  }, [isReviewed]);
 
-
-  if (isReviewed === null) return <LoadingIndicator isLoading={true} />;
+  if (isLoading || isReviewed === null) return <LoadingIndicator isLoading={true} />;
 
 
   return (
@@ -121,13 +142,22 @@ const Item = () => {
             </Text>
           </View>
 
-          {!isReviewed ? (
-            <SubmitReview weaponId={query} containerStyles="my-7" onSuccess={() => setIsReviewed(true)} />
-          ) : (
-            <View style={{ height: 25 }} />
-          )}
 
-          <WeaponComments weaponId={query} />
+          {(!isReviewed || editReviewData) ? (
+        <SubmitReview 
+          weaponId={query} 
+          containerStyles="my-7"
+          editData={editReviewData}
+          onEditComplete={handleEditComplete}
+        />
+      ) : <View className='h-[100px]'></View>}
+
+      <WeaponComments 
+        key={isReviewed} 
+        weaponId={query} 
+        isReviewedToggle={isReviewedToggle}
+        onEditStart={handleEditStart}
+      />
         </ScrollView>
       </View>
 
@@ -148,4 +178,4 @@ const Item = () => {
   )
 }
 
-export default Item
+export default Item;
