@@ -1,5 +1,5 @@
 // HeaderComponent.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,10 @@ import {
   SafeAreaView,
   Animated,
   Alert,
-} from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import useAppWrite from "@/lib/useAppWrite";
-import { getAllWeapons } from '@/lib/appwrite';
-import SearchInput from './SearchInput';
+} from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { getAllWeapons } from "@/lib/appwrite";
+import SearchInput from "./SearchInput";
 
 const Header = ({
   selectedCategory,
@@ -22,7 +21,6 @@ const Header = ({
   const [slideAnim] = useState(new Animated.Value(-300));
   const [categories, setCategories] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-
 
   // Fetch weapons and group by category
   const fetchCategories = async () => {
@@ -38,29 +36,27 @@ const Header = ({
       setCategoryProducts(grouped);
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Failed to load categories!');
+      Alert.alert("Error", "Failed to load categories!");
     }
   };
 
-
   useEffect(() => {
     fetchCategories();
-  }, );
-
+  });
 
   const openMenu = () => {
     setModalVisible(true);
     Animated.timing(slideAnim, {
       toValue: 0,
-      duration: 300,
+      duration: 100,
       useNativeDriver: true,
     }).start();
   };
 
   const closeMenu = () => {
     Animated.timing(slideAnim, {
-      toValue: -300,
-      duration: 300,
+      toValue: -100,
+      duration: 100,
       useNativeDriver: true,
     }).start(() => {
       setModalVisible(false);
@@ -77,13 +73,15 @@ const Header = ({
         {/* Dynamic Title */}
         <View className="flex-1 items-center">
           <Text className="text-secondary-200 text-2xl font-bold">
-            {selectedCategory ? selectedCategory.toUpperCase() : "ALL CATEGORIES"}
+            {selectedCategory
+              ? selectedCategory.toUpperCase()
+              : "ALL CATEGORIES"}
           </Text>
         </View>
       </View>
 
       {/* Search Bar */}
-      <SearchInput/>
+      <SearchInput />
 
       {/* Categories Popup */}
       <Modal
@@ -103,7 +101,7 @@ const Header = ({
           style={{
             transform: [{ translateX: slideAnim }],
           }}
-          className="absolute top-0 left-0 bg-black-100 h-full w-3/4 shadow-lg rounded-r-lg"
+          className="absolute top-0 left-0 bg-black-100 h-full w-1/2 shadow-lg rounded-r-lg"
         >
           <SafeAreaView className="flex-1 p-5">
             <TouchableOpacity
@@ -124,7 +122,7 @@ const Header = ({
                   setSelectedCategory(category);
                   closeMenu();
                 }}
-                className="py-3 border border-gray-700"
+                className="py-3"
               >
                 <Text className="text-gray-100 text-2xl font-pmedium pl-4">
                   {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -135,7 +133,6 @@ const Header = ({
         </Animated.View>
       </Modal>
     </View>
-
   );
 };
 
