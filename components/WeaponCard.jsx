@@ -1,18 +1,22 @@
-import React from 'react'
-import { Image, TouchableOpacity, View, Text, Alert } from 'react-native'
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router } from 'expo-router';
-import { addItemsToCart, modifyViews } from '@/lib/appwrite';
+import React from "react";
+import { Image, TouchableOpacity, View, Text, Alert } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { router } from "expo-router";
+import { addItemsToCart, modifyViews, saveViewHistory } from "@/lib/appwrite";
 
-const WeaponCard = ({ item: {
-  $id,
-  weapon_name,
-  photo_url,
-  price
-}, isSubmitting, setIsSubmitting }) => {
-  const onPress = () => {
-    router.push(`/item/${$id}`);
-  }
+const WeaponCard = ({
+  item: { $id, weapon_name, photo_url, price },
+  isSubmitting,
+  setIsSubmitting,
+}) => {
+  const onPress = async () => {
+    try {
+      router.push(`/item/${$id}`);
+      await saveViewHistory($id);
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
 
   const addToCart = async () => {
     setIsSubmitting(true);
@@ -25,34 +29,34 @@ const WeaponCard = ({ item: {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <TouchableOpacity
-      className='w-full h-[128px] bg-blue-400/50 px-4 mb-7 rounded-lg'
+      className="w-full h-[128px] bg-blue-400/50 px-4 mb-7 rounded-lg"
       onPress={onPress}
       disabled={isSubmitting}
     >
-      <View className='flex-row py-4 gap-3 items-center'>
-        <View className='w-[96px] h-[96px] rounded-lg'>
+      <View className="flex-row py-4 gap-3 items-center">
+        <View className="w-[96px] h-[96px] rounded-lg">
           <Image
             source={{ uri: photo_url }}
-            className='w-full h-full rounded-lg'
-            resizeMode='cover'
+            className="w-full h-full rounded-lg"
+            resizeMode="cover"
           />
         </View>
 
-        <View className='flex-1'>
-          <Text className='text-xl font-psemibold text-gray-50 mb-3'>
+        <View className="flex-1">
+          <Text className="text-xl font-psemibold text-gray-50 mb-3">
             {weapon_name}
           </Text>
-          <Text className='text-lg font-psemibold text-green-600 mb-3'>
+          <Text className="text-lg font-psemibold text-green-600 mb-3">
             AUD ${price}
           </Text>
         </View>
 
         <TouchableOpacity
-          className='flex-col h-full justify-end'
+          className="flex-col h-full justify-end"
           onPress={addToCart}
           disabled={isSubmitting}
         >
@@ -60,7 +64,7 @@ const WeaponCard = ({ item: {
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
-export default WeaponCard
+export default WeaponCard;
