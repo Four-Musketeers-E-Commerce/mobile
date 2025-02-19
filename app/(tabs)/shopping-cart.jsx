@@ -1,11 +1,26 @@
-import CustomButton from '@/components/CustomButton'
-import { addToOrder, clearCartItems, getAllCartItems, modifyCartItem } from '@/lib/appwrite'
-import useAppWrite from '@/lib/useAppWrite'
-import React, { useCallback, useEffect, useState } from 'react'
-import { Alert, Image, ScrollView, Text, TouchableOpacity, View, TextInput } from 'react-native'
-import { useFocusEffect } from 'expo-router'
-import Feather from '@expo/vector-icons/Feather';
-import LoadingIndicator from '@/components/LoadingIndicator'
+import React, { useCallback, useEffect, useState } from "react";
+import { 
+  Alert, 
+  Image, 
+  ScrollView, 
+  Text, 
+  TouchableOpacity, 
+  View, 
+  TextInput 
+} from "react-native";
+import { useFocusEffect } from "expo-router";
+import Feather from "@expo/vector-icons/Feather";
+
+import CustomButton from "@/components/CustomButton";
+import LoadingIndicator from "@/components/LoadingIndicator";
+
+import { 
+  addToOrder, 
+  clearCartItems, 
+  getAllCartItems, 
+  modifyCartItem 
+} from "@/lib/appwrite";
+import useAppWrite from "@/lib/useAppWrite";
 
 const ShoppingCart = () => {
   const { data, refetch } = useAppWrite(getAllCartItems);
@@ -24,9 +39,10 @@ const ShoppingCart = () => {
   }, [data]);
 
   const calTotalPrice = () => {
-    const total = data?.reduce((total, item) => {
-      return total + item.quantity * item.weapons.price
-    }, 0) || 0;
+    const total =
+      data?.reduce((total, item) => {
+        return total + item.quantity * item.weapons.price;
+      }, 0) || 0;
     setTotalPrice(Number(total.toFixed(2)));
   }
   useEffect(() => {
@@ -43,14 +59,14 @@ const ShoppingCart = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleCheckout = async () => {
     setIsLoading(true);
     try {
-      if (!data.length) throw new Error("No items cna be checked out");
-      const weaponIds = data.map(item => item.weapons.$id);
-      const quantities = data.map(item => item.quantity);
+      if (!data.length) throw new Error("No items can be checked out");
+      const weaponIds = data.map((item) => item.weapons.$id);
+      const quantities = data.map((item) => item.quantity);
       await addToOrder(weaponIds, quantities, totalPrice);
       await clearCartItems();
       await refetch();
@@ -60,7 +76,7 @@ const ShoppingCart = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleQuantityChange = (weaponId, value) => {
     if (/^\d*$/.test(value)) { // Ensure only numbers are typed
@@ -84,7 +100,7 @@ const ShoppingCart = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const refreshData = async () => {
     setIsLoading(true);
@@ -95,38 +111,40 @@ const ShoppingCart = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  useFocusEffect(useCallback(() => {
-    refreshData();
-  }, []));
+  useFocusEffect(
+    useCallback(() => {
+      refreshData();
+    }, [])
+  );
 
   useEffect(() => {
     refreshData();
-  }, [])
+  }, []);
 
   useEffect(() => {
     calTotalPrice();
   }, [data]);
 
   return (
-    <View className='bg-primary h-full'>
+    <View className="bg-primary h-full">
       <LoadingIndicator isLoading={isLoading} />
 
-      <View className='mt-12 p-4 flex-1'>
-        <View className='w-full flex-row justify-between items-center'>
-          <Text className='text-start text-2xl text-gray-100 font-psemibold'>
-            Cart Items {' '}
-            <Text className='text-lg text-gray-100 font-pmedium'>
+      <View className="mt-12 p-4 flex-1">
+        <View className="w-full flex-row justify-between items-center">
+          <Text className="text-start text-2xl text-gray-100 font-psemibold">
+            Cart Items{" "}
+            <Text className="text-lg text-gray-100 font-pmedium">
               ({data ? data.length : 0})
             </Text>
           </Text>
           <TouchableOpacity
-            className='flex justify-center items-center'
+            className="flex justify-center items-center"
             onPress={deleteAllItems}
             disabled={isLoading}
           >
-            <Text className='text-xl text-red-600 font-psemibold underline'>
+            <Text className="text-xl text-red-600 font-psemibold underline">
               Clear All
             </Text>
           </TouchableOpacity>
@@ -191,21 +209,20 @@ const ShoppingCart = () => {
                     <Feather name="trash-2" size={20} color="red" />
                   </TouchableOpacity>
                 </View>
-                <Text className='text-2xl text-green-600 font-psemibold'>
-                  $AUD {item.weapons.price}
-                </Text>
+                <Text className="text-2xl text-green-600 font-psemibold">
+                    $AUD {item.weapons.price}
+                  </Text>
+                  
+                </View>
               </View>
-            </View>
-          ))}
+            ))}
         </ScrollView>
       </View>
 
-      <View
-        className='bg-primary w-full absolute bottom-0 p-4 flex-row items-center justify-between'
-      >
-        <Text className='text-xl text-gray-50 font-psemibold'>
-          Total:{' '}
-          <Text className='text-2xl text-secondary font-bold'>
+      <View className="bg-primary w-full absolute bottom-0 p-4 flex-row items-center justify-between">
+        <Text className="text-xl text-gray-50 font-psemibold">
+          Total:{" "}
+          <Text className="text-2xl text-secondary font-bold">
             $AUD {totalPrice}
           </Text>
         </Text>
@@ -217,7 +234,7 @@ const ShoppingCart = () => {
         />
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default ShoppingCart
+export default ShoppingCart;

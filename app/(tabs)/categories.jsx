@@ -13,7 +13,7 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 const Category = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryProducts, setCategoryProducts] = useState([]);
-  const [isSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (
     <View className="bg-primary h-full flex-row gap-4">
@@ -30,7 +30,13 @@ const Category = () => {
         <FlatList
           data={categoryProducts[selectedCategory]}
           keyExtractor={(item) => item.$id}
-          renderItem={({ item }) => <WeaponCard item={item} />}
+          renderItem={({ item }) => (
+            <WeaponCard
+              item={item}
+              isSubmitting={isSubmitting}
+              setIsSubmitting={setIsSubmitting}
+            />
+          )}
           className="px-4 pt-40"
         />
       ) : (
@@ -73,9 +79,13 @@ const Category = () => {
                 <FlatList
                   className="px-4"
                   data={categoryProducts[item]?.slice(0)}
-                  keyExtractor={(product) => product.$id}
-                  renderItem={({ item: product }) => (
-                    <WeaponCard item={product} />
+                  keyExtractor={(item) => item.$id}
+                  renderItem={({ item }) => (
+                    <WeaponCard
+                      item={item}
+                      isSubmitting={isSubmitting}
+                      setIsSubmitting={setIsSubmitting}
+                    />
                   )}
                 />
               </View>
