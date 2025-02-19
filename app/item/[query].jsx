@@ -1,15 +1,15 @@
-import CustomButton from '@/components/CustomButton';
-import { addItemsToCart, getWeapon, modifyViews, hasUserReviewed } from '@/lib/appwrite';
-import useAppWrite from '@/lib/useAppWrite';
-import { router, useLocalSearchParams } from 'expo-router'
-import React, { useEffect, useState } from 'react'
-import { View, Text, Image, ScrollView, TouchableOpacity, Alert, Share } from 'react-native'
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, Image, ScrollView, TouchableOpacity, Alert, Share } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
+import CustomButton from '@/components/CustomButton';
 import SubmitReview from '@/components/SubmitReview';
 import WeaponComments from '@/components/WeaponComments';
 import LoadingIndicator from '@/components/LoadingIndicator';
+import { addItemsToCart, getWeapon, modifyViews, hasUserReviewed } from '@/lib/appwrite';
+import useAppWrite from '@/lib/useAppWrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const Item = () => {
@@ -19,18 +19,35 @@ const Item = () => {
   const [isReviewed, setIsReviewed] = useState(null);
   const { isUpdated } = useGlobalContext();
   const [isLoading, setIsLoading] = useState(true);
-  const [editReviewData, setEditReviewData] = useState(null);
+  const [editReviewData, setEditReviewData] = useState({ commentId: null, ratingId: null });
+  const scrollViewRef = useRef(null);
 
   const isReviewedToggle = () => {
     setIsReviewed(!isReviewed);
-  }
+  };
 
+  // Update the handleEditStart function to include scrolling
   const handleEditStart = (reviewData) => {
     setEditReviewData(reviewData);
-    setIsReviewed(false); // Show the review form
+    setIsReviewed(false);
+    
+    // Scroll to the review section with a short delay to ensure state is updated
+    setTimeout(() => {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ 
+          y: 200, // Approximate position of review section - adjust as needed
+          animated: true 
+        });
+      }
+    }, 100);
   };
 
   const handleEditComplete = () => {
+    setEditReviewData(null);
+    setIsReviewed(true);
+  };
+
+  const handleCancelEdit = () => {
     setEditReviewData(null);
     setIsReviewed(true);
   };
@@ -48,24 +65,21 @@ const Item = () => {
     finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const onShare = async () => {
     try {
       const result = await Share.share({ message: "" });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
-
         } else {
-
         }
       } else if (result.action === Share.dismissedAction) {
-
       }
     } catch (error) {
       Alert.alert("Error", error.message);
     }
-  }
+  };
 
   const addToCart = async () => {
     setIsSubmitting(true);
@@ -77,24 +91,18 @@ const Item = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   const onOpenPage = async () => {
     await modifyViews(query);
-  }
+  };
 
   useEffect(() => {
     if (query) {
       onOpenPage();
       checkIfReviewed();
     }
-  }, [query, isUpdated])
-
-  useEffect(() => {
-  }, [isReviewed]);
-
-  if (isLoading || isReviewed === null) return <LoadingIndicator isLoading={true} />;
-
+  }, [query, isUpdated]);
 
   return (
     <View className='bg-primary h-full'>
@@ -123,7 +131,10 @@ const Item = () => {
       </View>
 
       <View className='flex-1'>
-        <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        <ScrollView 
+          ref={scrollViewRef} 
+          contentContainerStyle={{ paddingBottom: 100 }}
+        >
           <View className='w-full h-[35vh] mb-5'>
             <Image
               source={{ uri: data?.photo_url }}
@@ -142,28 +153,23 @@ const Item = () => {
             </Text>
           </View>
 
+          <SubmitReview 
+            weaponId={query} 
+            containerStyles="my-7"
+            editData={editReviewData}
+            onEditComplete={handleEditComplete}
+            onCancelEdit={handleCancelEdit}
+          />
 
-          {(!isReviewed || editReviewData) ? (
-        <SubmitReview 
-          weaponId={query} 
-          containerStyles="my-7"
-          editData={editReviewData}
-          onEditComplete={handleEditComplete}
-        />
-      ) : <View className='h-[100px]'></View>}
-
-      <WeaponComments 
-        key={isReviewed} 
-        weaponId={query} 
-        isReviewedToggle={isReviewedToggle}
-        onEditStart={handleEditStart}
-      />
+          <WeaponComments 
+            weaponId={query} 
+            isReviewedToggle={isReviewedToggle}
+            onEditStart={handleEditStart}
+          />
         </ScrollView>
       </View>
 
-      <View
-        className='w-full bg-primary absolute bottom-0 px-4 pb-10 pt-2 justify-between items-center flex-row'
-      >
+      <View className='w-full bg-primary absolute bottom-0 px-4 pb-10 pt-2 justify-between items-center flex-row'>
         <Text className='text-2xl text-green-400 font-psemibold'>
           AUD ${data?.price}
         </Text>
@@ -175,7 +181,7 @@ const Item = () => {
         />
       </View>
     </View>
-  )
-}
+  );
+};
 
 export default Item;
