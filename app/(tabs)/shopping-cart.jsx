@@ -1,35 +1,53 @@
-import CustomButton from "@/components/CustomButton";
-import {
-  addToOrder,
-  clearCartItems,
-  getAllCartItems,
-  modifyCartItem,
-} from "@/lib/appwrite";
-import useAppWrite from "@/lib/useAppWrite";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Alert,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+import { 
+  Alert, 
+  Image, 
+  ScrollView, 
+  Text, 
+  TouchableOpacity, 
+  View, 
+  TextInput 
 } from "react-native";
 import { useFocusEffect } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
+
+import CustomButton from "@/components/CustomButton";
 import LoadingIndicator from "@/components/LoadingIndicator";
+
+import { 
+  addToOrder, 
+  clearCartItems, 
+  getAllCartItems, 
+  modifyCartItem 
+} from "@/lib/appwrite";
+import useAppWrite from "@/lib/useAppWrite";
 
 const ShoppingCart = () => {
   const { data, refetch } = useAppWrite(getAllCartItems);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [quantities, setQuantities] = useState({});
+
+  useEffect(() => {
+    if (data) {
+      const initialQuantities = data.reduce((acc, item) => {
+        acc[item.weapons.$id] = item.quantity.toString();
+        return acc;
+      }, {});
+      setQuantities(initialQuantities);
+    }
+  }, [data]);
+
   const calTotalPrice = () => {
     const total =
       data?.reduce((total, item) => {
         return total + item.quantity * item.weapons.price;
       }, 0) || 0;
     setTotalPrice(Number(total.toFixed(2)));
-  };
+  }
+  useEffect(() => {
+    calTotalPrice();
+  }, [data]);
 
   const modifyItemQuantity = async (weaponId, quantity) => {
     setIsLoading(true);
@@ -58,6 +76,17 @@ const ShoppingCart = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleQuantityChange = (weaponId, value) => {
+    if (/^\d*$/.test(value)) { // Ensure only numbers are typed
+      setQuantities((prev) => ({ ...prev, [weaponId]: value }));
+    }
+  };
+
+  const handleQuantityBlur = (weaponId) => {
+    const newQuantity = parseInt(quantities[weaponId], 10) || 1;
+    modifyItemQuantity(weaponId, newQuantity);
   };
 
   const deleteAllItems = async () => {
@@ -121,60 +150,69 @@ const ShoppingCart = () => {
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
-          {data &&
-            data.map((item) => (
-              <View
-                key={item.$id}
-                className="bg-blue-400/50 w-full h-[124px] p-4 my-3 rounded-xl flex-row items-center gap-4"
-              >
-                <Image
-                  source={{ uri: item.weapons.photo_url }}
-                  className="w-[96px] h-[96px] rounded-xl"
-                  resizeMode="cover"
-                />
-                <View className="h-full flex-col justify-between">
-                  <Text className="text-xl text-white font-pregular">
-                    {item.weapons.weapon_name}
-                  </Text>
-                  <View className="flex-row gap-1 items-center">
-                    <TouchableOpacity
-                      className="w-6 h-6 justify-center items-center rounded-md bg-gray-100/70"
-                      onPress={() =>
-                        modifyItemQuantity(item.weapons.$id, item.quantity - 1)
-                      }
-                      disabled={isLoading}
-                    >
-                      <Text className="text-xl text-black-100 font-pregular">
-                        -
-                      </Text>
-                    </TouchableOpacity>
-                    <View className="w-6 h-6 justify-center items-center rounded-md bg-gray-100/70">
-                      <Text className="text-xl text-black-100 font-pregular">
-                        {item.quantity}
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      className="w-6 h-6 justify-center items-center rounded-md bg-gray-100/70"
-                      onPress={() =>
-                        modifyItemQuantity(item.weapons.$id, item.quantity + 1)
-                      }
-                      disabled={isLoading}
-                    >
-                      <Text className="text-xl text-black-100 font-pregular">
-                        +
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      className="w-6 h-6 ml-4 justify-center items-center rounded-md"
-                      onPress={() => modifyItemQuantity(item.weapons.$id, 0)}
-                      disabled={isLoading}
-                    >
-                      <Feather name="trash-2" size={20} color="red" />
-                    </TouchableOpacity>
-                  </View>
-                  <Text className="text-2xl text-green-600 font-psemibold">
+          {data && data.map(item => (
+            <View
+              key={item.$id}
+              className='bg-blue-400/50 w-full h-[124px] p-4 my-3 rounded-xl flex-row items-center gap-4'
+            >
+              <Image
+                source={{ uri: item.weapons.photo_url }}
+                className='w-[96px] h-[96px] rounded-xl'
+                resizeMode='cover'
+              />
+              <View className='h-full flex-col justify-between'>
+                <Text className='text-xl text-white font-pregular'>
+                  {item.weapons.weapon_name}
+                </Text>
+                <View className='flex-row gap-2 items-center'>
+                  <TouchableOpacity
+                    className='w-6 h-6 justify-center items-center rounded-md bg-gray-100/70'
+                    onPress={() => modifyItemQuantity(item.weapons.$id, item.quantity - 1)}
+                    disabled={isLoading}
+                  >
+                    <Text className='text-xl text-black-100 font-pregular'>
+                      -
+                    </Text>
+                  </TouchableOpacity>
+                  {/* <View className='w-6 h-6 justify-center items-center rounded-md bg-gray-100/70'> */}
+                  <TextInput
+                      keyboardType="numeric"
+                      value={quantities[item.weapons.$id]}
+                      onChangeText={(text) => handleQuantityChange(item.weapons.$id, text)}
+                      onBlur={() => handleQuantityBlur(item.weapons.$id)}
+                      style={{
+                        width: 25,
+                        height: 25,
+                        textAlign: 'center',
+                        fontSize: 13,
+                        backgroundColor: 'white',
+                        color: 'black',
+                        borderRadius: 5,
+                        padding: 5,
+                      }}
+                    />
+                  {/* </View> */}
+                  <TouchableOpacity
+                    className='w-6 h-6 justify-center items-center rounded-md bg-gray-100/70'
+                    onPress={() => modifyItemQuantity(item.weapons.$id, item.quantity + 1)}
+                    disabled={isLoading}
+                  >
+                    <Text className='text-xl text-black-100 font-pregular'>
+                      +
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    className='w-6 h-6 ml-4 justify-center items-center rounded-md'
+                    onPress={() => modifyItemQuantity(item.weapons.$id, 0)}
+                    disabled={isLoading}
+                  >
+                    <Feather name="trash-2" size={20} color="red" />
+                  </TouchableOpacity>
+                </View>
+                <Text className="text-2xl text-green-600 font-psemibold">
                     $AUD {item.weapons.price}
                   </Text>
+                  
                 </View>
               </View>
             ))}
